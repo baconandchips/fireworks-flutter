@@ -41,6 +41,9 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  BluetoothDevice _connectedDevice = null;
+  List<BluetoothService> _services = List<BluetoothDevice>.empty(growable: true); // possible problems?
+
   _addDeviceToList(final BluetoothDevice device) {
     if (!widget.devicesList.contains(device)) {
       setState(() {
@@ -95,7 +98,21 @@ class _MyHomePageState extends State<MyHomePage> {
                   'Connect',
                   // style: TextStyle(color: Colors.white),
                 ),
-                onPressed: () {},
+                onPressed: () {
+                  setState(() async {
+                    widget.flutterBlue.stopScan();
+                    try {
+                      await device.connect();
+                    } catch (e) {
+                      if (e.code != 'already_connected') {
+                        throw e;
+                      }
+                    } finally {
+                      _services = await device.discoverServices();
+                    }
+                    _connectedDevice = device;
+                  });
+                },
               ),
             ],
           ),
@@ -111,6 +128,42 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
+  ListView _buildConnectdeviceView() {
+    List<Container> containers = List<Container>.empty(growable: true);
+    for (BluetoothService service in _services) {
+      containers.add(
+        Container(
+          height: 50,
+          child: Row(
+            children: <Widget>[
+              Expanded(
+                child: Column(
+                  children: <Widget>[
+                    Text(service.uuid.toString()),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+    
+    return ListView(
+      padding: const EdgeInsets.all(8),
+      children: <Widget>[
+        ...containers,
+      ],
+    );
+  }
+
+  ListView _buildView() {
+    if (_connectedDevice != null) {
+      return _buildConnectDeviceView();
+    }
+    return _buildListViewOfDevices();
+  }
+
   @override
   Widget build(BuildContext context) {
 
@@ -118,7 +171,7 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(
          title: Text(widget.title),
        ),
-       body: _buildListViewOfDevices(),
+       body: _buildView(),
     );
   }
 }
