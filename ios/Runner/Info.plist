@@ -41,5 +41,15 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
+	<key>NSBluetoothAlwaysUsageDescription</key>
+	<string>Need BLE permission (NSBl Always Usage)</string>
+	<key>NSBluetoothPeripheralUsageDescription</key>
+	<string>Need BLE permission (NSBl Peripheral Usage)</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>Need Location permission (NSLocation always and when in use)</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>Need Location permission (NSLocation always)</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Need Location permission (NSLocation when in use)</string>
 </dict>
 </plist>
